@@ -1,9 +1,9 @@
-DO key, run this script to create infrasturcutre (K8's cluster and repo)
-have a script to install doctl - get DO key and create a env var (reanme to not collide)
-then run the make files. # terraformDemo
+# Infrastructure
 
+To be able to create a kubernetes cluster, you are required to clone your forked project, and configure some access
+tokens.
 
----
+## Prepare the infrastructure
 
 To create the required infrastructure on DigitalOcean, we are first going to clone your forked version of this
 infrastructure.
@@ -40,6 +40,10 @@ create a local environment variable. Replace the below (after the = and up to th
 
     echo "export TF_VAR_demo_digital_ocean_token=dop_v1_xxxxxxxxxx" > .env
 
-Set up your GitHub access.
+You must also create a [GitHub deployment key](../github/accessToken.md) for the automation process to access your
+GitHub repositories.
 
-    echo "export TF_VAR_demo_github_token=" >> .env
+Once you have a GitHub deployment key return to your terminal and use the access token you just generated to give your
+project access to GitHub. Replace the below (after the = and up to the ") with your own personal access token.
+
+    echo "export TF_VAR_demo_github_token=ghp_xxxxxx" >> .env

@@ -18,19 +18,3 @@ provider "digitalocean" {
   alias = "terraform-runner"
   token = var.demo_digital_ocean_token
 }
-
-provider "github" {
-  alias = "terraform-runner"
-  token = var.demo_github_token
-}
-
-module "kdr" {
-  source = "../modules/kdrDemo"
-
-  providers = {
-    digitalocean = digitalocean.terraform-runner
-    github       = github.terraform-runner
-  }
-
-  environment = "dev"
-}
