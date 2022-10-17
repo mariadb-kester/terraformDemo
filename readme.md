@@ -52,8 +52,9 @@ to [fork](./docs/files/github/fork.md) the required repositories before creating
 
 ---
 
-## First Steps
+## Getting Started
 
-DO key, run this script to create infrasturcutre (K8's cluster and repo)
-have a script to install doctl - get DO key and create a env var (reanme to not collide)
-then run the make files. # terraformDemo
+Once you have created the required accounts, and forked the GitHub repositories, you are ready to create the
+[DigitalOcean infrastructure](./docs/files/digitalocean/infrastructure.md).
+
+

@@ -1,5 +1,5 @@
 resource "digitalocean_kubernetes_cluster" "this" {
-  name          = "${var.environment}-qtc-systems"
+  name          = "${var.environment}-kdr-demo"
   region        = "lon1"
   auto_upgrade  = true
   surge_upgrade = true

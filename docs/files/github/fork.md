@@ -1,5 +1,8 @@
 # GitHub
 
+_A fork is a copy of a repository that you manage. Forks let you make changes to a project without affecting the
+original repository. You can fetch updates from or submit changes to the original repository with pull requests._
+
 ### GitHub Fork
 
 To allow you to use, maintain and adjust the projects required, you will need to fork the following repositories.
@@ -12,7 +15,11 @@ To allow you to use, maintain and adjust the projects required, you will need to
 
 Ensure you are logged in to GitHub and then visit each of the listed URL's.
 
-To do this, browse to the URL in a new tab and select the fork option. You will be asked to complete...
+![GitHub Fork](../../images/github/GH_fork.png)
 
-keep the name of the repository the same...
+To do this, browse to the URL in a new tab and select the fork option. You will be given some options, keep them as
+default.
 
+![GitHub Create Fork](../../images/github/GH_create_fork.png)
+
+Click the Create fork button and the system will fork the repository. 

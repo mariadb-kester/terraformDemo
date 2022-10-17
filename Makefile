@@ -24,12 +24,14 @@ clear:
 # Usage: replace % with environment directory name, e.g. for rnd:
 # make init-rnd
 init-%:
+	source .env && \
 	cd $* && \
 	terraform init
 
 # Usage: replace % with environment directory name, e.g. for rnd:
 # make refresh-rnd
 refresh-%:
+	source .env && \
 	cd $* && \
 	terraform refresh
 
@@ -37,6 +39,7 @@ refresh-%:
 # make plan-rnd
 # DEBUG level logs will be written to /tmp/DIRNAME-plan-ENV-TIMESTAMP
 plan-%: init-% clear
+	source .env && \
 	cd $* && \
 	terraform plan
 
@@ -44,6 +47,7 @@ plan-%: init-% clear
 # make apply-rnd
 # DEBUG level logs will be written to /tmp/DIRNAME-apply-ENV-TIMESTAMP
 apply-%: init-% clear
+	source .env && \
 	cd $* && \
 	terraform apply --auto-approve && \
 	(git tag --delete "$*" || true) && \
@@ -55,6 +59,7 @@ apply-%: init-% clear
 # make k8s-destroy-rnd
 # DEBUG level logs will be written to /tmp/DIRNAME-destroy-ENV-TIMESTAMP
 k8s-destroy-%: update-tags
+	source .env && \
 	(git checkout "$*" || true) && \
 	cd $* && \
 	terraform init && \
@@ -64,10 +69,12 @@ k8s-destroy-%: update-tags
 # Usage: replace % with environment directory name, e.g. for rnd:
 # make tag-rnd
 tag-%:
+	source .env && \
 	(git tag --delete "$*" || true) && \
  	git tag -a "$*" -m "Tagged manually using make-tag-$*" && \
 	(git push origin --delete "$*" || true) && \
 	git push origin "$*"
 
 update-tags:
+	source .env && \
 	@git pull --force --tags

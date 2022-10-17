@@ -8,15 +8,15 @@ terraform {
       version = "2.3.0"
     }
     github = {
-      source  = "hashicorp/github"
-      version = "4.1.0"
+      source  = "integrations/github"
+      version = "~> 4.0"
     }
   }
 }
 
 provider "digitalocean" {
   alias = "terraform-runner"
-  token = var.digital_ocean_token
+  token = var.demo_digital_ocean_token
 }
 
 provider "github" {
@@ -24,8 +24,8 @@ provider "github" {
   token = var.github_token
 }
 
-module "qtc" {
-  source = "../modules/kestersMariaDBDemo"
+module "kdr" {
+  source = "../modules/kdrDemo"
 
   providers = {
     digitalocean = digitalocean.terraform-runner
