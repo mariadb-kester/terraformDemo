@@ -1,0 +1,56 @@
+# MariaDB_K8s_Demo
+A demonstration of MariaDB on Docker, using Kubernetes on Digital Ocean, automated with Terraform and Helm
+
+
+
+To Do:
+
+Create Digital Ocean Account for kesterriley@mariadb.com
+Create a kesterriley@mariadb.com github account
+Create CircleCI account for kesterriley@mariadb.com
+Create a URL and point phpAppDocker/Dockerfile to it. 
+
+Use DigitalOcean API /terraform to create networking, for the URL and directing traffic over mutiple DCs 
+lon1.xxxx.com fra1.xxxx.com and xxxx.com over both.
+
+Create Docker containers for Databases (Galera), and MaxScale - based on MariaDB Enterprise, these need an 
+enterprise key inside CircleCI ( and this will run out )
+Create a PHP Crud Application in a Docker container which shows DB server connected to (server region and name)
+
+Create DO infrastructure (Registry, URL, multi region) with Terraform
+Push Docker containers to CircleCI, built and scanned with TRIVY  via CircleCI
+
+Create Galera Infrastuructue, with MaxScale (one in each Region) using API for management.
+Create Database, Load Data
+Point Web Browser to URL and test application
+Create secondary DC (sync DB) connect to secondary DC
+
+How do you control multiple Kubernetes clusters from one command. So that this can create multiple data centers and 
+connect to each one to look at pods and services. 
+
+how do you link datacenters over DB connections. 
+
+how do you connect PHP to multiple data sources ?
+
+The build process currently sends docker images for maxscale and server to docker hub. These need to go to 
+DigitalOcean like the phpApp does.  
+
+Can circleci handle multiple docker builds or does each one need to be a seperate Project. -- Make seperate.
+
+the phpAppDocker container needs to make a pod with the yaml for each Datacenter, should this yaml not be the main 
+project?
+
+Performance test vs skysql. 
+
+
+Explainer video:
+
+- empty ship (hosts)
+- a few containers on - not economical (different contaiers docker, rockit etc)
+- lots of continers on - more economical
+- what happens if ship sinks - everything lost
+- if you have a product that must survive - you might need to ship on different ships
+- container organistsion (orchastration) port cranes -different crans (docker compose, kubernetes)
+
+gets expensive if containers are not used 
+ships are slow - might not always be the best
