@@ -39,11 +39,3 @@ To be able to continue you require a [DigitalOcean API Key](./apikey.md). Once y
 create a local environment variable. Replace the below (after the = and up to the ") with your own API key.
 
     echo "export TF_VAR_demo_digital_ocean_token=dop_v1_xxxxxxxxxx" > .env
-
-You must also create a [GitHub deployment key](../github/accessToken.md) for the automation process to access your
-GitHub repositories.
-
-Once you have a GitHub deployment key return to your terminal and use the access token you just generated to give your
-project access to GitHub. Replace the below (after the = and up to the ") with your own personal access token.
-
-    echo "export TF_VAR_demo_github_token=ghp_xxxxxx" >> .env
