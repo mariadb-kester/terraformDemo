@@ -49,7 +49,7 @@ plan-%: init-% clear
 apply-%: init-% clear
 	source .env && \
 	cd $* && \
-	terraform apply --auto-approve &&
+	terraform apply --auto-approve
 
 # Usage: replace % with environment directory name, e.g. for rnd:
 # make k8s-destroy-rnd
@@ -60,9 +60,3 @@ k8s-destroy-%:
 	terraform init && \
 	terraform destroy --force && \
 	rm -rf outputs
-
-# Usage: replace % with environment directory name, e.g. for rnd:
-# make tag-rnd
-tag-%:
-	source .env && \
- 	git tag -a "$*" -m "Tagged manually using make-tag-$*" &&
