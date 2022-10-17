@@ -49,18 +49,13 @@ plan-%: init-% clear
 apply-%: init-% clear
 	source .env && \
 	cd $* && \
-	terraform apply --auto-approve && \
-	(git tag --delete "$*" || true) && \
-	git tag -a "$*" -m "Tagged automatically during make-apply-$*" && \
-	(git push origin --delete "$*" || true) && \
-	git push origin "$*"
+	terraform apply --auto-approve &&
 
 # Usage: replace % with environment directory name, e.g. for rnd:
 # make k8s-destroy-rnd
 # DEBUG level logs will be written to /tmp/DIRNAME-destroy-ENV-TIMESTAMP
-k8s-destroy-%: update-tags
+k8s-destroy-%:
 	source .env && \
-	(git checkout "$*" || true) && \
 	cd $* && \
 	terraform init && \
 	terraform destroy --force && \
@@ -70,11 +65,4 @@ k8s-destroy-%: update-tags
 # make tag-rnd
 tag-%:
 	source .env && \
-	(git tag --delete "$*" || true) && \
- 	git tag -a "$*" -m "Tagged manually using make-tag-$*" && \
-	(git push origin --delete "$*" || true) && \
-	git push origin "$*"
-
-update-tags:
-	source .env && \
-	@git pull --force --tags
+ 	git tag -a "$*" -m "Tagged manually using make-tag-$*" &&
