@@ -21,7 +21,7 @@ provider "digitalocean" {
 
 provider "github" {
   alias = "terraform-runner"
-  token = var.github_token
+  token = var.demo_github_token
 }
 
 module "kdr" {

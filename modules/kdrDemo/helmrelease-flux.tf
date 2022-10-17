@@ -35,7 +35,7 @@ resource "helm_release" "flux" {
 
   set {
     name  = "git.url"
-    value = "git@github.com:kesterriley/k8s-releases-kdr"
+    value = "git@github.com:mariadb-kester/k8s-do-helm"
   }
 
   set {

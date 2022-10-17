@@ -42,4 +42,4 @@ create a local environment variable. Replace the below (after the = and up to th
 
 Set up your GitHub access.
 
-    echo "export TF_VAR_github_token=" >> .env
+    echo "export TF_VAR_demo_github_token=" >> .env
