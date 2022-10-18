@@ -14,3 +14,12 @@ resource "digitalocean_kubernetes_cluster" "this" {
     max_nodes  = 3
   }
 }
+
+resource "digitalocean_container_registry" "this" {
+  name                   = "${var.environment}-kdr-demo"
+  subscription_tier_slug = "basic"
+
+  depends_on = [
+    digitalocean_kubernetes_cluster.this
+  ]
+}

@@ -20,7 +20,6 @@ module "kdr" {
 
   providers = {
     digitalocean = digitalocean.terraform-runner
-    github       = github.terraform-runner
   }
 
   environment = "dev"

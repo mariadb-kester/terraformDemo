@@ -54,9 +54,9 @@ apply-%: init-% clear
 # Usage: replace % with environment directory name, e.g. for rnd:
 # make k8s-destroy-rnd
 # DEBUG level logs will be written to /tmp/DIRNAME-destroy-ENV-TIMESTAMP
-k8s-destroy-%:
+destroy-%:
 	source .env && \
 	cd $* && \
 	terraform init && \
-	terraform destroy --force && \
+	terraform destroy && \
 	rm -rf outputs
