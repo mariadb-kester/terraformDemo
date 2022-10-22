@@ -52,18 +52,24 @@ It is important to create your [Github](./docs/files/github/readme.md) account b
 
 Hopefully you have already created the [Third Party Accounts](#third-party-accounts) required.
 
-There are a couple of manual steps, to ensure Git is setup.
+There are a couple of manual steps, to ensure Git is setup. Make sure you replace everything between the ""'s with your
+information.
 
     git version || brew install git
     mkdir /tmp/mariadbdemo
     cd /tmp/mariadbdemo
     git clone https://github.com/mariadb-kester/terraformDemo.git
     cd /tmp/mariadbdemo/terraformDemo
+	git config user.name "<REPLACE WITH YOUR GITHUB USER NAME>"
+	git config user.email "<REPLACE WITH YOUR GITHUB EMAIL>"
 
 You will now have this repository on your computer, everything else you need is scripted for you.
 
 To make it easy, there is a `make` script to set up your laptop, this will ask you for your GitHub User Name and email
 address, for a MacBook:
+
+*(note: if you are prompted for a password, it will be your computer password, this is not always clear, you might also
+be prompted for some 'y' inputs)*
 
     make prepare-mac
 
@@ -85,4 +91,7 @@ You are now ready to create the
 
 After you have created the infrastructure you are ready to configure CircleCI to build the containers that you are going
 to use within your environment. The following guide will help
-you [configure CircleCI](./docs/files/circleci/configure.md) to use the DigitalOcean infrastructure. 
+you [configure CircleCI](./docs/files/circleci/configure.md) to use the DigitalOcean infrastructure.
+
+Now that we have the infrastructure and build process ready, we can start manipulating our cluster, to do this we are
+going to use helm. 
