@@ -29,13 +29,8 @@ You require a certain level of technical knowledge to complete this, as you are 
 computer.
 
 The demonstration is designed to run on a MacBook, but, you can easily modify this to run from a Linux based computer as
-well. On a Mac you can use brew to ensure your packages are updated and installed.
-
-    brew upgrade
-    brew update --auto-update
-    brew install make terraform pre-commit git
-
-On a Linux server, you can use your package manager. On a Windows computer... Good Luck!
+well. On a Mac you can use brew to ensure your packages are updated and installed. There is a Script provided to ensure
+the required elements are provided.
 
 ### Third Party Accounts
 
@@ -47,14 +42,47 @@ You will require accounts for:
 
 [CircleCi](./docs/files/circleci/readme.md) and [Digital Ocean](./docs/files/digitalocean/readme.md) support Single Sign
 On (SSO) using your GitHub account. SSO allows easy navigation between the services and allows you to link the accounts
-together. Therefore it is important to create your [Github](./docs/files/github/readme.md) account first and you need
-to [fork](./docs/files/github/fork.md) the required repositories before creating the other accounts.
+together.
+
+It is important to create your [Github](./docs/files/github/readme.md) account before creating the other accounts.
 
 ---
 
 ## Getting Started
 
-Once you have created the required accounts, and forked the GitHub repositories, you are ready to create the
+Hopefully you have already created the [Third Party Accounts](#third-party-accounts) required.
+
+There are a couple of manual steps, to ensure Git is setup.
+
+    git version || brew install git
+    mkdir /tmp/mariadbdemo
+    cd /tmp/mariadbdemo
+    git clone https://github.com/mariadb-kester/terraformDemo.git
+    cd /tmp/mariadbdemo/terraformDemo
+
+You will now have this repository on your computer, everything else you need is scripted for you.
+
+To make it easy, there is a `make` script to set up your laptop, this will ask you for your GitHub User Name and email
+address, for a MacBook:
+
+    make prepare-mac
+
+On a Linux computer:
+
+    make prepare-linux
+
+On a Windows computer... Good Luck!
+
+By this point you should have:
+
+- created the required accounts
+- forked the GitHub repository
+- cloned this repository
+- ran the appropriate prepare command
+
+You are now ready to create the
 [DigitalOcean infrastructure](./docs/files/digitalocean/infrastructure.md).
 
-
+After you have created the infrastructure you are ready to configure CircleCI to build the containers that you are going
+to use within your environment. The following guide will help
+you [configure CircleCI](./docs/files/circleci/configure.md) to use the DigitalOcean infrastructure. 
