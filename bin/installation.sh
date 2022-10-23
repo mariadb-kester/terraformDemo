@@ -71,7 +71,7 @@ clone_repos
 
 echo "export GITHUB_USER=$GITHUB_USER" >> /tmp/mariadbdemo/terraformDemo/.env
 echo "export GITHUB_EMAIL=$GITHUB_EMAIL" >> /tmp/mariadbdemo/terraformDemo/.env
-echo "export TF_VAR_user_name=$GITHUB_USER" >> /tmp/mariadbdemo/terraformDemo/.env
+echo "export DO_REPO=registry.digitalocean.com/$GITHUB_USER-kdr-demo" >> /tmp/mariadbdemo/terraformDemo/.env
 chmod 700 /tmp/mariadbdemo/terraformDemo/.env
 
 #Set unique name for repos
@@ -151,4 +151,4 @@ clear
 echo "OK - if all has gone well, our Infrastructure is built, our CI system is configured and working"
 echo "and our containers are ready to use."
 echo "We are going to use HELM to build the database servers and MaxScale, to which we will download"
-exho "the training database and apply it"
+echo "the training database and apply it"
