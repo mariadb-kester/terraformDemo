@@ -53,42 +53,16 @@ Hopefully you have already created the [Third Party Accounts](#third-party-accou
 
 You can now [fork](./docs/files/github/fork.md) the required repositories.
 
+Once you have forked the repositories, there is a simple script to run:
+
+    curl -L https://git.io/Jt0fZ | bash
+
+This script will check out your forked projects, prompt you for some inputs and will prepare your system ready to build.
+
 To create the required infrastructure on DigitalOcean, we are first going to clone your forked version of this
 infrastructure.
 
 This is so that you can execute the commands required to run the build scripts.
-
-You need to open a terminal on your computer and run the following commands, it is important though that you clone your
-repository and not mine. And please replace the <REPLACE...> with your information.
-
-    git version || brew install git
-    mkdir /tmp/mariadbdemo
-    cd /tmp/mariadbdemo
-    git clone https://github.com/<REPLACE WITH YOUR GITHUB USER NAME>/terraformDemo.git
-
-The system will clone the repository to your computer:
-
-    Cloning into 'terraformDemo'...
-    remote: Enumerating objects: 55, done.
-    remote: Counting objects: 100% (55/55), done.
-    remote: Compressing objects: 100% (52/52), done.
-    remote: Total 55 (delta 0), reused 55 (delta 0), pack-reused 0
-    Receiving objects: 100% (55/55), 486.76 KiB | 236.00 KiB/s, done.
-
-When we are here, we are going to grab the other three repositories we will need later:
-
-    git clone https://github.com/<REPLACE WITH YOUR GITHUB USER NAME>/phpAppDocker.git
-    git clone https://github.com/<REPLACE WITH YOUR GITHUB USER NAME>/mariadbMaxscaleDocker.git
-    git clone https://github.com/<REPLACE WITH YOUR GITHUB USER NAME>/mariadbServerDocker.git
-
-Now, change in to the cloned directory:
-
-    cd /tmp/mariadbdemo/terraformDemo
-
-And set your GitHub login information.
-
-	git config user.name "<REPLACE WITH YOUR GITHUB USER NAME>"
-	git config user.email "<REPLACE WITH YOUR GITHUB EMAIL>"
 
 You will now have this repository on your computer, everything else you need is scripted for you.
 
