@@ -55,46 +55,21 @@ You can now [fork](./docs/files/github/fork.md) the required repositories.
 
 Once you have forked the repositories, there is a simple script to run:
 
-    curl -L https://git.io/Jt0fZ | bash
+    curl -L https://github.com/mariadb-kester/terraformDemo/blob/main/bin/circleci_configure_project.sh | sudo bash
 
 This script will check out your forked projects, prompt you for some inputs and will prepare your system ready to build.
 
-To create the required infrastructure on DigitalOcean, we are first going to clone your forked version of this
-infrastructure.
-
-This is so that you can execute the commands required to run the build scripts.
-
-You will now have this repository on your computer, everything else you need is scripted for you.
+When this script runs you might need to enter your Operating System User password, you might also have to accept some
+prompts with a `y` or `yes`
 
 To make it easy, there is a `make` script to set up your laptop, this will ask you for your GitHub User Name and email
-address, for a MacBook:
+address and an Access Key for Digital Ocean.
 
 *(note: if you are prompted for a password, it will be your computer password, this is not always clear, you might also
 be prompted for some 'y' inputs)*
 
-    make prepare-mac
-
-On a Linux computer:
-
-    make prepare-linux
-
-On a Windows computer... Good Luck!
-
-By this point you should have:
-
-- created the required accounts
-- forked the GitHub repository
-- cloned this repository
-- ran the appropriate prepare command
-
 You are now ready to create the
 [DigitalOcean infrastructure](./docs/files/digitalocean/infrastructure.md).
-
-[comment]: <> (After you have created the infrastructure you are ready to configure CircleCI to build the containers that you are going)
-
-[comment]: <> (to use within your environment. The following guide will help)
-
-[comment]: <> (you [configure CircleCI]&#40;./docs/files/circleci/configure.md&#41; to use the DigitalOcean infrastructure.)
 
 The next stop is to tell CircleCI to prepare to build our projects.
 
@@ -130,4 +105,13 @@ If everything has worked well, this will generate a build of MaxScale, Enterpris
 which you can check on the dashboard and will push them to the Container Registry in DigitalOcean. You can check they
 are there as well.
 
-If everything looks good, we can deploy our Database Cluster using Helm 
+If everything looks good, we can deploy our Database Cluster using Helm
+
+### destroy
+
+The destroy command will delete the infrastructure. This is important, if you have finished using it, to stop getting
+charged. Clearly, do not run this until you have finished.
+
+`make destroy-dev`
+
+If you are running the destroy command, it will ask you to confirm by typing `yes` at the prompt.

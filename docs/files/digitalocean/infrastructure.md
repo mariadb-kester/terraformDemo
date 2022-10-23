@@ -60,14 +60,7 @@ ready.
 
 ![apply dev](../../images/digitalocean/DO_apply-dev.png)
 
-### destroy
 
-The destroy command will delete the infrastructure. This is important, if you have finished using it, to stop getting
-charged. Clearly, do not run this until you have finished.
-
-`make destroy-dev`
-
-If you are running the destroy command, it will ask you to confirm by typing `yes` at the prompt.
 
 ----
 

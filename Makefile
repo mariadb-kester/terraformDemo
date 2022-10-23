@@ -45,8 +45,6 @@ initialise-mac:
 	pre-commit --version || brew install pre-commit
 	pre-commit install
 	chmod 777 ./bin/circleci_configure_project.sh
-	echo "" > /tmp/mariadbdemo/terraformDemo/.env
-	chmod 700 /tmp/mariadbdemo/terraformDemo/.env
 
 initialise-linux:
 	make --version || brew install make
