@@ -138,11 +138,6 @@ and we need to set a [Personal Access Token](./docs/files/circleci/personaltoken
 
 We now need to set up some additional variables
 
-export TF_VAR_demo_digital_ocean_token=dop_v1_c0d76311d1aad05af257282a2b4bb1e466d9247c678ab0160cc9ad2802ff8595 export
-CIRCLECI_API=4fec0f377a4b1d0b66537c3cbb6d57b25c5bbcfe export CIRCLECI_USER=mariadb-kester export
-DO_REPO=registry.digitalocean.com/dev-kdr-demo export MARIADB_TOKEN=7b02f262-b9c8-4396-a988-21f926dda76e export
-MAXSCALE_VERSION=22.08 export MARIADB_SERVER_VERSION=10.6
-
 we can now use automation to configure our projects:
 
     make circleci-configure-projects
