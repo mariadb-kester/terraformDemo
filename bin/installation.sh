@@ -113,24 +113,7 @@ make plan-dev
 make apply-dev
 
 clear
-echo "Great! We now have Digital Ocean Infrastructure Built"
-echo "Let me just configure the Digital Ocean utility"
-doctl auth init -t ${DO_API_KEY}
-echo "... Next there is a small manual process required."
-echo "    We need to enable the new cluster work with the registry"
-echo "https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/digitalocean/infrastructure.md"
-read -p  "Press Y once you have completed this process: " prompt
-
-if [[ $prompt =~ [yY](es)* ]]
-then
-  clear
-  echo "Great, we can now start to build the containers and push them to your Private repository"
-else
-  clear
-  echo "Exiting, you will need to run this script again"
-  exit 1
-fi
-
+echo "Great, we can now start to build the containers and push them to your Private repository"
 echo "But before we can do that, we need to configure CircleCI to build your Docker Containers"
 echo "To do this we are going to need a CircleCI Personal Token"
 echo "https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/circleci/personaltoken.md"
@@ -144,10 +127,11 @@ read CIRCLECI_USER
 echo "export CIRCLECI_USER=$CIRCLECI_USER" >> .env
 
 clear
-echo "Sit Back, Relax! I will need three or four minutes to build the containers for you."
 make circleci-configure-projects
-
-sleep 180
+clear
+echo "Sit Back, Relax! I will need three or four minutes to build the containers for you."
+echo "You can check the progress on https://app.circleci.com/pipelines/"
+sleep 210
 clear
 echo "OK - if all has gone well, our Infrastructure is built, our CI system is configured and working"
 echo "and our containers are ready to use."
@@ -160,6 +144,7 @@ echo ""
 echo "Getting Cluster ID"
 doctl registry login
 kube_id=`doctl kubernetes cluster get mariadb-kester-kdr-demo | tail -n 1 | awk -F" " ' { print $1} '`
+doctl kubernetes cluster registry add mariadb-kester-kdr-demo
 echo "Configuring CLI tool"
 doctl kubernetes cluster kubeconfig save $kube_id
 echo "Configuring HELM"
@@ -168,6 +153,6 @@ helm repo update
 echo "Creating a Name Space for: " $GITHUB_USER
 kubectl create ns $GITHUB_USER
 
-
+helm install mariadb $GITHUB_USER/galera --namespace=$GITHUB_USER --set image.repository="$GITHUB_USER-kdr-demo/mariadb-maxscale"
 
 
