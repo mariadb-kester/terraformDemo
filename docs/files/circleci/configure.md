@@ -1,3 +1,5 @@
+--- REMOVE - replaced with automation ---
+
 # CircleCI Configuration
 
 Before you run the steps in this guide, ensure you have built

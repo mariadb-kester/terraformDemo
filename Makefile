@@ -8,14 +8,22 @@ export TF_LOG_PATH ?= /tmp/$(shell basename $$PWD)-$@-$(shell date -u +"%Y-%m-%d
 
 # ############################################################################################################
 
-git-clone:
-	mkdir -p /tmp/github.com/
-	cd /tmp/github.com/
-	git clone https://github.com/repos/$my_user_name/phpAppDocker
-	git clone https://github.com/repos/$my_user_name/mariadbServerDocker
-	git clone https://github.com/repos/$my_user_name/mariadbMaxscaleDocker
-#	git clone https://github.com/repos/$my_user_name/terraformDemo
-#	curl -u $my_user_name https://api.github.com/repos/$my_user_name/helmChrtsDatabaseDemo/forks -d ''
+git-prep-build: clear
+	cd /tmp/mariadbdemo/phpAppDocker && \
+	echo 1 > /tmp/mariadbdemo/phpAppDocker/VERSION && \
+	git add VERSION && \
+	git commit -m "Auto Version Increase" && \
+	git push && \
+	cd /tmp/mariadbdemo/mariadbServerDocker && \
+	echo 1 > /tmp/mariadbdemo/mariadbServerDocker/VERSION && \
+	git add VERSION && \
+	git commit -m "Auto Version Increase" && \
+    git push && \
+	cd /tmp/mariadbdemo/mariadbMaxscaleDocker && \
+	echo 1 > /tmp/mariadbdemo/mariadbMaxscaleDocker/VERSION && \
+	git add VERSION && \
+	git commit -m "Auto Version Increase" && \
+    git push
 
 prepare-mac: clear initialise-mac
 
@@ -33,9 +41,12 @@ initialise-mac:
 	helm version || brew helm
 	git --version || brew install git
 	kubectl version || brew install kubectl
-#	doctl version || brew install doctl
+	doctl version || brew install doctl
 	pre-commit --version || brew install pre-commit
 	pre-commit install
+	chmod 777 ./bin/circleci_configure_project.sh
+	echo "" > /tmp/mariadbdemo/terraformDemo/.env
+	chmod 700 /tmp/mariadbdemo/terraformDemo/.env
 
 initialise-linux:
 	make --version || brew install make
@@ -43,9 +54,10 @@ initialise-linux:
 	helm version || brew helm
 	git --version || brew install git
 	kubectl version || brew install kubectl
-#	doctl version || brew install doctl
+	doctl version || brew install doctl
 	pre-commit --version || brew install pre-commit
 	pre-commit install
+	chmod 777 ./bin/circleci_configure_project.sh
 
 run-pre-commit:
 	pre-commit run --all-files
@@ -59,12 +71,14 @@ clear:
 # Usage: replace % with environment directory name, e.g. for rnd:
 # make init-rnd
 init-%:
+	source .env && \
 	cd $* && \
 	terraform init
 
 # Usage: replace % with environment directory name, e.g. for rnd:
 # make refresh-rnd
 refresh-%:
+	source .env && \
 	cd $* && \
 	terraform refresh
 
@@ -72,6 +86,7 @@ refresh-%:
 # make plan-rnd
 # DEBUG level logs will be written to /tmp/DIRNAME-plan-ENV-TIMESTAMP
 plan-%: init-% clear
+	source .env && \
 	cd $* && \
 	terraform plan
 
@@ -79,30 +94,24 @@ plan-%: init-% clear
 # make apply-rnd
 # DEBUG level logs will be written to /tmp/DIRNAME-apply-ENV-TIMESTAMP
 apply-%: init-% clear
+	source .env && \
 	cd $* && \
-	terraform apply --auto-approve && \
-	(git tag --delete "$*" || true) && \
-	git tag -a "$*" -m "Tagged automatically during make-apply-$*" && \
-	(git push origin --delete "$*" || true) && \
-	git push origin "$*"
+	terraform apply --auto-approve
 
 # Usage: replace % with environment directory name, e.g. for rnd:
 # make k8s-destroy-rnd
 # DEBUG level logs will be written to /tmp/DIRNAME-destroy-ENV-TIMESTAMP
-destroy-%: update-tags
-    (git checkout "$*" || true) && \
+destroy-%:
+	source .env && \
 	cd $* && \
 	terraform init && \
 	terraform destroy && \
 	rm -rf outputs
 
-# Usage: replace % with environment directory name, e.g. for rnd:
-# make tag-rnd
-tag-%:
-	(git tag --delete "$*" || true) && \
- 	git tag -a "$*" -m "Tagged manually using make-tag-$*" && \
-	(git push origin --delete "$*" || true) && \
-	git push origin "$*"
 
-update-tags:
-	@git pull --force --tags
+circleci-configure-projects:
+	./bin/circleci_configure_project.sh
+
+initialise-helm:
+	helm repo add https://charts.helm.sh/stable
+	helm repo update
