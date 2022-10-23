@@ -17,6 +17,7 @@ function clone_repos(){
 #  git clone https://github.com/$GITHUB_USER/phpAppDocker.git
 #  git clone https://github.com/$GITHUB_USER/mariadbMaxscaleDocker.git
 #  git clone https://github.com/$GITHUB_USER/mariadbServerDocker.git
+#  git clone https://github.com/$GITHUB_USER/helmChartsDatabaseDemo
 }
 
 function test_forked_urls() {
@@ -151,4 +152,22 @@ clear
 echo "OK - if all has gone well, our Infrastructure is built, our CI system is configured and working"
 echo "and our containers are ready to use."
 echo "We are going to use HELM to build the database servers and MaxScale, to which we will download"
-echo "the training database and apply it"
+echo "the training database and apply it."
+
+echo ""
+
+#get Kubernetes ID
+echo "Getting Cluster ID"
+doctl registry login
+kube_id=`doctl kubernetes cluster get mariadb-kester-kdr-demo | tail -n 1 | awk -F" " ' { print $1} '`
+echo "Configuring CLI tool"
+doctl kubernetes cluster kubeconfig save $kube_id
+echo "Configuring HELM"
+helm repo add mariadb-kester-repo https://mariadb-kester.github.io/helmChartsDatabaseDemo/
+helm repo update
+echo "Creating a Name Space for: " $GITHUB_USER
+kubectl create ns $GITHUB_USER
+
+
+
+
