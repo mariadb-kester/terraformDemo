@@ -28,9 +28,7 @@ git-prep-build: clear
 prepare-mac: clear initialise-mac
 
 prepare-linux: clear initialise-linux
-# Can only be ran once Digital Ocean Account Created
-doctl-configure:
-	doctl auth init -t ${DO_ACCESS_TOKEN}
+
 
 k8s-configure:
 	echo 1

@@ -16,4 +16,5 @@ the automation.
 
 ![Personal API Token](../../images/circleci/CI_personal_token_token.png)
 
-If you forget or misplace the token value, you will need to create a new one. 
+If you forget or misplace the token value, you will need to create a new one. You will need this value for the build
+script.

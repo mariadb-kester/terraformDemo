@@ -55,7 +55,7 @@ You can now [fork](./docs/files/github/fork.md) the required repositories.
 
 Once you have forked the repositories, there is a simple script to run:
 
-    curl -L https://github.com/mariadb-kester/terraformDemo/blob/main/bin/circleci_configure_project.sh | sudo bash
+    bash <(curl https://raw.githubusercontent.com/mariadb-kester/terraformDemo/main/bin/installation.sh)
 
 This script will check out your forked projects, prompt you for some inputs and will prepare your system ready to build.
 
@@ -68,44 +68,7 @@ address and an Access Key for Digital Ocean.
 *(note: if you are prompted for a password, it will be your computer password, this is not always clear, you might also
 be prompted for some 'y' inputs)*
 
-You are now ready to create the
-[DigitalOcean infrastructure](./docs/files/digitalocean/infrastructure.md).
 
-The next stop is to tell CircleCI to prepare to build our projects.
-
-We need to make sure we are in the correct directory:
-
-    cd /tmp/mariadbdemo/terraformDemo
-
-and then we need to set up the User Name (including the < >) we have used for CircleCI
-
-    echo "export CIRCLECI_USER=<INSERT USER NAME>" >> .env
-
-and we need to set a [Personal Access Token](./docs/files/circleci/personaltoken.md):
-
-    echo "export CIRCLECI_API=<INSERT ACCESS TOKEN>" >> .env
-
-We now need to set up some additional variables
-
-we can now use automation to configure our projects:
-
-    make circleci-configure-projects
-
-When you run this command, it will configure CircleCI and GitHub and this will generate some warning emails to be sent
-to you.
-
-We are required at this point to build some Docker Containers, we are building our own, as these are Enterprise
-Containers are unique to us, and must be kept private. To make this easy, there is a script to do this for you. From
-your terminal.
-
-    cd /tmp/mariadbdemo/terraformDemo
-    make git-prep-build
-
-If everything has worked well, this will generate a build of MaxScale, Enterprise Server and a PHP Test App, in CircleCI
-which you can check on the dashboard and will push them to the Container Registry in DigitalOcean. You can check they
-are there as well.
-
-If everything looks good, we can deploy our Database Cluster using Helm
 
 ### destroy
 

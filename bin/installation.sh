@@ -107,3 +107,43 @@ make init-dev
 make plan-dev
 make apply-dev
 
+clear
+echo "Great! We now have Digital Ocean Infrastructure Built"
+echo "Let me just configure the Digital Ocean utility"
+doctl auth init -t ${DO_API_KEY}
+echo "... Next there is a small manual process required."
+echo "    We need to enable the new cluster work with the registry"
+echo "https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/digitalocean/infrastructure.md"
+read -p  "Press Y once you have completed this process." prompt
+
+if [[ $prompt =~ [yY](es)* ]]
+then
+  clear
+  echo "Great, we can now start to build the containers and push them to your Private repository"
+else
+  clear
+  echo "Exiting, you will need to run this script again"
+  exit 1
+fi
+
+echo "But before we can do that, we need to configure CircleCI to build your Docker Containers"
+echo "To do this we are going to need a CircleCI Personal Token"
+echo "https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/circleci/personaltoken.md"
+echo "Please enter the CircleCI Personal Token:"
+
+read CIRCLECI_API
+echo "export CIRCLECI_API=$CIRCLECI_API" >> .env
+
+echo "Thanks! I also need your CircleCI User Name"
+read CIRCLECI_USER
+echo "export CIRCLECI_USER=$CIRCLECI_USER" >> .env
+
+make circleci-configure-projects
+
+clear
+echo "Nice Work!"
+echo "... I am now commiting a version change to your Git Repositories to force CircleCI to build"
+echo "    your repositories and push them to DigitalOcean, you can browse to https://app.circleci.com/pipelines/"
+echo "    if you would like to watch the progress"
+
+make git-prep-build
