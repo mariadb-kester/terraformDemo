@@ -74,6 +74,9 @@ echo "export GITHUB_EMAIL=$GITHUB_EMAIL" >> /tmp/mariadbdemo/terraformDemo/.env
 echo "export TF_VAR_user_name=$GITHUB_USER" >> /tmp/mariadbdemo/terraformDemo/.env
 chmod 700 /tmp/mariadbdemo/terraformDemo/.env
 
+#Set unique name for repos
+sed -i.bak "s/dev/${GITHUB_USER}/" /tmp/mariadbdemo/terraformDemo/dev/main.tf
+
 cd /tmp/mariadbdemo/terraformDemo
 #Ensure local Git is configured with the entered variables.
 git config user.name "$GITHUB_USER"
