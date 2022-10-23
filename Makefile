@@ -8,23 +8,6 @@ export TF_LOG_PATH ?= /tmp/$(shell basename $$PWD)-$@-$(shell date -u +"%Y-%m-%d
 
 # ############################################################################################################
 
-git-prep-build: clear
-	cd /tmp/mariadbdemo/phpAppDocker && \
-	echo 1 > /tmp/mariadbdemo/phpAppDocker/VERSION && \
-	git add VERSION && \
-	git commit -m "Auto Version Increase" && \
-	git push && \
-	cd /tmp/mariadbdemo/mariadbServerDocker && \
-	echo 1 > /tmp/mariadbdemo/mariadbServerDocker/VERSION && \
-	git add VERSION && \
-	git commit -m "Auto Version Increase" && \
-    git push && \
-	cd /tmp/mariadbdemo/mariadbMaxscaleDocker && \
-	echo 1 > /tmp/mariadbdemo/mariadbMaxscaleDocker/VERSION && \
-	git add VERSION && \
-	git commit -m "Auto Version Increase" && \
-    git push
-
 prepare-mac: clear initialise-mac
 
 prepare-linux: clear initialise-linux

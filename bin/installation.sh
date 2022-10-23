@@ -14,9 +14,9 @@
 
 function clone_repos(){
   git clone https://github.com/$GITHUB_USER/terraformDemo.git
-  git clone https://github.com/$GITHUB_USER/phpAppDocker.git
-  git clone https://github.com/$GITHUB_USER/mariadbMaxscaleDocker.git
-  git clone https://github.com/$GITHUB_USER/mariadbServerDocker.git
+#  git clone https://github.com/$GITHUB_USER/phpAppDocker.git
+#  git clone https://github.com/$GITHUB_USER/mariadbMaxscaleDocker.git
+#  git clone https://github.com/$GITHUB_USER/mariadbServerDocker.git
 }
 
 function test_forked_urls() {
@@ -71,6 +71,7 @@ clone_repos
 
 echo "export GITHUB_USER=$GITHUB_USER" >> /tmp/mariadbdemo/terraformDemo/.env
 echo "export GITHUB_EMAIL=$GITHUB_EMAIL" >> /tmp/mariadbdemo/terraformDemo/.env
+echo "export TF_VAR_user_name=$GITHUB_USER" >> /tmp/mariadbdemo/terraformDemo/.env
 chmod 700 /tmp/mariadbdemo/terraformDemo/.env
 
 cd /tmp/mariadbdemo/terraformDemo
@@ -114,7 +115,7 @@ doctl auth init -t ${DO_API_KEY}
 echo "... Next there is a small manual process required."
 echo "    We need to enable the new cluster work with the registry"
 echo "https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/digitalocean/infrastructure.md"
-read -p  "Press Y once you have completed this process." prompt
+read -p  "Press Y once you have completed this process: " prompt
 
 if [[ $prompt =~ [yY](es)* ]]
 then
@@ -138,12 +139,13 @@ echo "Thanks! I also need your CircleCI User Name"
 read CIRCLECI_USER
 echo "export CIRCLECI_USER=$CIRCLECI_USER" >> .env
 
+clear
+echo "Sit Back, Relax! I will need three or four minutes to build the containers for you."
 make circleci-configure-projects
 
+sleep 180
 clear
-echo "Nice Work!"
-echo "... I am now commiting a version change to your Git Repositories to force CircleCI to build"
-echo "    your repositories and push them to DigitalOcean, you can browse to https://app.circleci.com/pipelines/"
-echo "    if you would like to watch the progress"
-
-make git-prep-build
+echo "OK - if all has gone well, our Infrastructure is built, our CI system is configured and working"
+echo "and our containers are ready to use."
+echo "We are going to use HELM to build the database servers and MaxScale, to which we will download"
+exho "the training database and apply it"

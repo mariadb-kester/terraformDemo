@@ -1,5 +1,5 @@
 resource "digitalocean_kubernetes_cluster" "this" {
-  name          = "${var.environment}-kdr-demo"
+  name          = "${TF_VAR_user_name}-kdr-demo"
   region        = "lon1"
   auto_upgrade  = true
   surge_upgrade = true
@@ -16,7 +16,7 @@ resource "digitalocean_kubernetes_cluster" "this" {
 }
 
 resource "digitalocean_container_registry" "this" {
-  name                   = "${var.environment}-kdr-demo"
+  name                   = "${TF_VAR_user_name}-kdr-demo"
   subscription_tier_slug = "basic"
 
   depends_on = [

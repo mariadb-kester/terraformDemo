@@ -33,7 +33,7 @@ terminal, where you can execute all the commands with the required permissions.
 
 ### Third Party Accounts
 
-You will require accounts for:
+You will require FREE accounts for:
 
 - [Github](./docs/files/github/readme.md)
 - [CircleCi](./docs/files/circleci/readme.md)

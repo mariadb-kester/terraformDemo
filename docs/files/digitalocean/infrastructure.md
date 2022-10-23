@@ -13,7 +13,12 @@ Container Registry that we will use to hold your containers that will be deploye
 
 ![Container Registry](../../images/digitalocean/DO_container_registry.png)
 
-Unfortunately, we are unable to automate the integration via Terraform, and we therefore must tick the 'Integrate all
-clusters' option and the `Save and Continue` button.
+Click the second Edit (the one for DigitalOcean Kubernetes Integration)
+
+![Container Registry](../../images/digitalocean/DO_container_registry_confirm.png)
+
+Tick the tick box and click `Save`
 
 **It is very important that you do this, for the rest of the process to work**
+
+You can now return to the script and answer the prompt with a `y`.

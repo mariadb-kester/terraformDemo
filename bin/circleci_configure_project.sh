@@ -17,3 +17,8 @@ curl -X POST --header "Content-Type: application/json" -d '{"name":"MARIADB_TOKE
 curl -X POST --header "Content-Type: application/json" -d '{"name":"MARIADB_TOKEN","value":"'$MARIADB_TOKEN'"}' https://circleci.com/api/v1.1/project/gh/$CIRCLECI_USER/mariadbMaxscaleDocker/envvar -H "Circle-Token: $CIRCLECI_API"
 curl -X POST --header "Content-Type: application/json" -d '{"name":"MARIADB_SERVER_VERSION","value":"'$MARIADB_SERVER_VERSION'"}' https://circleci.com/api/v1.1/project/gh/$CIRCLECI_USER/mariadbServerDocker/envvar -H "Circle-Token: $CIRCLECI_API"
 curl -X POST --header "Content-Type: application/json" -d '{"name":"MAXSCALE_VERSION","value":"'$MAXSCALE_VERSION'"}' https://circleci.com/api/v1.1/project/gh/$CIRCLECI_USER/mariadbMaxscaleDocker/envvar -H "Circle-Token: $CIRCLECI_API"
+
+
+curl -X POST https://circleci.com/api/v2/project/gh/$CIRCLECI_USER/phpAppDocker/pipeline --header "Circle-Token: $CIRCLECI_API" --header "content-type: application/json" --data '{"branch":"main"}'
+curl -X POST https://circleci.com/api/v2/project/gh/$CIRCLECI_USER/mariadbServerDocker/pipeline --header "Circle-Token: $CIRCLECI_API" --header "content-type: application/json" --data '{"branch":"main"}'
+curl -X POST https://circleci.com/api/v2/project/gh/$CIRCLECI_USER/mariadbMaxscaleDocker/pipeline --header "Circle-Token: $CIRCLECI_API" --header "content-type: application/json" --data '{"branch":"main"}'
