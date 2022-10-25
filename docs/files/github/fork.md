@@ -12,7 +12,6 @@ the following repositories.
 - https://github.com/mariadb-kester/mariadbServerDocker
 - https://github.com/mariadb-kester/mariadbMaxscaleDocker
 - https://github.com/mariadb-kester/phpAppDocker
-- https://github.com/mariadb-kester/helmChartsDatabaseDemo
 
 Ensure you are logged in to GitHub and then visit each of the listed URL. (The details will be different for each
 repository)

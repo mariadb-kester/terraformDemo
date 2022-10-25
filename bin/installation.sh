@@ -153,6 +153,33 @@ helm repo update
 echo "Creating a Name Space for: " $GITHUB_USER
 kubectl create ns $GITHUB_USER
 
-helm install mariadb $GITHUB_USER/galera --namespace=$GITHUB_USER --set image.repository="$GITHUB_USER-kdr-demo/mariadb-maxscale"
+helm install mariadb $GITHUB_USER-repo/galera --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
+
+clear
+echo "Great, we are now installing your databases, this takes a bit of time, as it is building and installing Two
+MaxScale Servers, three Galera Servers and all the required infrastructure. "
+
+#reapeat while something is not ready (probably login)
+# if this takes a long time something might be wrong (more than 5 minutes quit give commands to debug)
+#
+#clear
+#echo "Success I can login!"
+#echo "... I am not going to clone the training Database"
+## clone training DB and load in to Galera Cluster
+#echo "Excellent that is done..."
+#echo "... I am just going to check there are records in the database"
+## select * from xyz
+#
+#^^ The above steps should be done from within a docker container so no passwords are used here
+# ^^ Like a kubectl exec -it -n mariadb-kester mariadb-galera-0 "curl.... url"
+# ^^ Like a kubectl exec -it -n mariadb-kester mariadb-galera-0 "un tar"
+# ^^ Like a kubectl exec -it -n mariadb-kester mariadb-galera-0 "mariadb < files"
+
+all in one command?
 
 
+#
+#echo "Finally!"
+#echo "I am going to install the application.... standby"
+#helm install phpAppDocker
+#echo "This is how you connect to it - I am done"

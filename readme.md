@@ -15,13 +15,17 @@ an [Enterprise Customer Download Token](https://customers.mariadb.com/downloads/
 
 ---
 
-## Terms of use
+### Terms of use
 
 **Nothing in this demonstration is designed to be used in production and this is not supplied, supported or endorsed by
 MariaDB.**
+
+*Please note the free $200 credit is enough to run this demonstration, however, if you do not decommission your
+services, or you use more than the free credit you will be liable for the cost.*
+
 ---
 
-## Prerequisites
+### Prerequisites
 
 ### You!
 
@@ -68,8 +72,6 @@ address and an Access Key for Digital Ocean.
 *(note: if you are prompted for a password, it will be your computer password, this is not always clear, you might also
 be prompted for some 'y' inputs)*
 
-
-
 ### destroy
 
 The destroy command will delete the infrastructure. This is important, if you have finished using it, to stop getting
@@ -78,3 +80,41 @@ charged. Clearly, do not run this until you have finished.
 `make destroy-dev`
 
 If you are running the destroy command, it will ask you to confirm by typing `yes` at the prompt.
+
+### Contributing to *terraformDemo*
+
+<!--- If your README is long or you have some specific process or steps you want contributors to follow, consider creating a separate CONTRIBUTING.md file--->
+To contribute to the *terraformDemo* repository, follow these steps:
+
+1. Fork this repository.
+2. Create a branch: `git checkout -b <branch_name>`.
+3. Make your changes and commit them: `git commit -m '<commit_message>'`
+4. Push to the original branch: `git push origin my-helm-repo/<location>`
+5. Create the pull request.
+
+Alternatively see the GitHub documentation
+on [creating a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)
+.
+
+### Contributors
+
+Thanks to the following people who have contributed to this project:
+
+* [@kesterriley](https://github.com/kesterriley)
+* [@swade1987](https://github.com/swade1987)
+
+### Contact
+
+If you want to contact me you can reach me at kesterriley@hotmail.com.
+
+### License
+
+<!--- If you're not sure which open license to use see https://choosealicense.com/--->
+
+This project uses the following license: [MIT](https://github.com/mariadb-kester/terraformDemo/blob/master/LICENSE).
+
+### Disclaimer
+
+Whilst, I might currently work for MariaDB, this work was originally created before my employment by MariaDB and any
+development to these scripts is done strictly in my own time. It is therefore not endorsed, supported by or recommend by
+MariaDB. 
