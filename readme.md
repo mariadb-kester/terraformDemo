@@ -1,5 +1,10 @@
 # Terraform Demo to build MariaDB Enterprise in Containers
 
+[![License](https://img.shields.io/badge/mit-blue.svg)](https://opensource.org/licenses/mit)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/mariadb-kester/terraformDemo/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/mariadb-kester/terraformDemo/tree/main)
+![GitHub stars](https://img.shields.io/github/stars/mariadb-kester/terraformDemo?style=social)
+![GitHub forks](https://img.shields.io/github/forks/mariadb-kester/terraformDemo?style=social)
+
 This project is designed to create a containerised Kubernetes infrastructure on DigitalOcean, and deploy the following
 using automation:
 
