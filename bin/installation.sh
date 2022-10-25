@@ -18,6 +18,7 @@ function clone_repos(){
 #  git clone https://github.com/$GITHUB_USER/mariadbMaxscaleDocker.git
 #  git clone https://github.com/$GITHUB_USER/mariadbServerDocker.git
 #  git clone https://github.com/$GITHUB_USER/helmChartsDatabaseDemo
+  git clone https://github.com/mariadb-corporation/mariadb-training.git
 }
 
 function test_forked_urls() {
@@ -155,31 +156,38 @@ kubectl create ns $GITHUB_USER
 
 helm install mariadb $GITHUB_USER-repo/galera --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
 
+
+while [ "$(kubectl get pod -n mariadb-kester mariadb-galera-2  --output="jsonpath={.status.containerStatuses[*].ready}" | cut -d' ' -f2)" != "true" ]; do
+   sleep 5
+   echo "Waiting for Database Service to be ready."
+done
+
 clear
 echo "Great, we are now installing your databases, this takes a bit of time, as it is building and installing Two
 MaxScale Servers, three Galera Servers and all the required infrastructure. "
 
-#reapeat while something is not ready (probably login)
-# if this takes a long time something might be wrong (more than 5 minutes quit give commands to debug)
-#
-#clear
-#echo "Success I can login!"
-#echo "... I am not going to clone the training Database"
-## clone training DB and load in to Galera Cluster
-#echo "Excellent that is done..."
-#echo "... I am just going to check there are records in the database"
-## select * from xyz
-#
-#^^ The above steps should be done from within a docker container so no passwords are used here
-# ^^ Like a kubectl exec -it -n mariadb-kester mariadb-galera-0 "curl.... url"
-# ^^ Like a kubectl exec -it -n mariadb-kester mariadb-galera-0 "un tar"
-# ^^ Like a kubectl exec -it -n mariadb-kester mariadb-galera-0 "mariadb < files"
+kubectl cluster-info
+kubectl exec -it -n $GITHUB_USER `kubectl get pods -n $GITHUB_USER | grep active | awk -F" " ' { print $1 } '` -- maxctrl list servers
 
-all in one command?
+echo "Success I can login!"
+echo "... I am not going to load the training Database"
+echo "... Prepare Data to Load"
+gunzip /tmp/mariadbdemo/mariadb-training/sample_databases/employees/*.gz
+echo "Connecting to the Database Server"
+kubectl port-forward svc/mariadb-galera-masteronly -n $GITHUB_USER 3306:3306 &
+kubePID=$!
+cd /tmp/mariadbdemo/mariadb-training/sample_databases/employees
+mariadb -uMARIADB_USER -pmariadb -h 127.0.0.1 -P3306 < employees.sql
+cd /tmp/mariadbdemo/terraformDemo
+
+echo "Excellent that is done..."
+echo "... I am just going to check there are records in the database"
+mariadb -uMARIADB_USER -pmariadb -h 127.0.0.1 -P3306 -e "SELECT COUNT(*) FROM employees.employees"
+kill $kubePID
 
 
-#
-#echo "Finally!"
-#echo "I am going to install the application.... standby"
+
+echo "Finally!"
+echo "I am going to install the application.... standby"
 #helm install phpAppDocker
-#echo "This is how you connect to it - I am done"
+echo "This is how you connect to it - I am done"

@@ -21,8 +21,10 @@ initialise-mac:
 	terraform --version || brew terraform
 	helm version || brew helm
 	git --version || brew install git
+	gunzip --version || brew install gunzip
 	kubectl version || brew install kubectl
 	doctl version || brew install doctl
+	mariadb --version || brew install mysql-client
 	pre-commit --version || brew install pre-commit
 	pre-commit install
 	chmod 777 ./bin/circleci_configure_project.sh
@@ -36,6 +38,8 @@ initialise-linux:
 	doctl version || brew install doctl
 	pre-commit --version || brew install pre-commit
 	pre-commit install
+	yum install -y gunzip
+	yum install mariadb-client
 	chmod 777 ./bin/circleci_configure_project.sh
 
 run-pre-commit:
