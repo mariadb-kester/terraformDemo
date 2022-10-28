@@ -54,6 +54,10 @@ read GITHUB_USER
 echo "Great, and now please tell me which email address you use for GitHub"
 read GITHUB_EMAIL
 
+clear
+echo "We now need your MariaDB Enterprise Token:"
+read MARIADB_TOKEN
+
 
 #Test Repo's are forked.
 forked_list_test
@@ -74,6 +78,7 @@ clone_repos
 echo "export GITHUB_USER=$GITHUB_USER" >> /tmp/mariadbdemo/terraformDemo/.env
 echo "export GITHUB_EMAIL=$GITHUB_EMAIL" >> /tmp/mariadbdemo/terraformDemo/.env
 echo "export DO_REPO=registry.digitalocean.com/$GITHUB_USER-kdr-demo" >> /tmp/mariadbdemo/terraformDemo/.env
+echo "export MARIADB_TOKEN=$MARIADB_TOKEN" >> /tmp/mariadbdemo/terraformDemo/.env
 chmod 700 /tmp/mariadbdemo/terraformDemo/.env
 
 #Set unique name for repos
@@ -156,9 +161,10 @@ kubectl create ns $GITHUB_USER
 
 helm install mariadb $GITHUB_USER-repo/galera --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
 
+echo "Please wait while I build the database servers, I will check the status in two minutes"
 
 while [ "$(kubectl get pod -n mariadb-kester mariadb-galera-2  --output="jsonpath={.status.containerStatuses[*].ready}" | cut -d' ' -f2)" != "true" ]; do
-   sleep 5
+   sleep 30
    echo "Waiting for Database Service to be ready."
 done
 
@@ -170,12 +176,13 @@ kubectl cluster-info
 kubectl exec -it -n $GITHUB_USER `kubectl get pods -n $GITHUB_USER | grep active | awk -F" " ' { print $1 } '` -- maxctrl list servers
 
 echo "Success I can login!"
-echo "... I am not going to load the training Database"
+echo "... I am now going to load the training Database"
 echo "... Prepare Data to Load"
 gunzip /tmp/mariadbdemo/mariadb-training/sample_databases/employees/*.gz
 echo "Connecting to the Database Server"
 kubectl port-forward svc/mariadb-galera-masteronly -n $GITHUB_USER 3306:3306 &
 kubePID=$!
+sleep 5
 cd /tmp/mariadbdemo/mariadb-training/sample_databases/employees
 mariadb -uMARIADB_USER -pmariadb -h 127.0.0.1 -P3306 < employees.sql
 cd /tmp/mariadbdemo/terraformDemo
