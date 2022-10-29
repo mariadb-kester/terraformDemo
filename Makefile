@@ -25,6 +25,7 @@ initialise-mac:
 	kubectl version || brew install kubectl
 	doctl version || brew install doctl
 	mariadb --version || brew install mysql-client
+	pv --version || brew install pv
 	pre-commit --version || brew install pre-commit
 	pre-commit install
 	chmod 777 ./bin/circleci_configure_project.sh
@@ -39,7 +40,8 @@ initialise-linux:
 	pre-commit --version || brew install pre-commit
 	pre-commit install
 	yum install -y gunzip
-	yum install mariadb-client
+	yum install -y mariadb-client
+	yum install -y pv
 	chmod 777 ./bin/circleci_configure_project.sh
 
 run-pre-commit:

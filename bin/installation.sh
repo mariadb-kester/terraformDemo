@@ -18,7 +18,6 @@ function clone_repos(){
 #  git clone https://github.com/$GITHUB_USER/mariadbMaxscaleDocker.git
 #  git clone https://github.com/$GITHUB_USER/mariadbServerDocker.git
 #  git clone https://github.com/$GITHUB_USER/helmChartsDatabaseDemo
-  git clone https://github.com/mariadb-corporation/mariadb-training.git
 }
 
 function test_forked_urls() {
@@ -170,12 +169,15 @@ doctl kubernetes cluster kubeconfig save $kube_id
 echo "Configuring HELM"
 helm repo add mariadb-kester-repo https://mariadb-kester.github.io/helmChartsDatabaseDemo/
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo add jetstack https://charts.jetstack.io
 helm repo update
 echo "Creating a Name Space for: " $GITHUB_USER
 kubectl create ns $GITHUB_USER
 
+
 #helm install mariadb $GITHUB_USER-repo/galera --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
 helm install mariadb mariadb-kester-repo/masterreplica --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
+
 
 echo "Please wait while I build the database servers, I will check the status in two minutes"
 sleep 120
@@ -194,17 +196,17 @@ kubectl exec -it -n $GITHUB_USER `kubectl get pods -n $GITHUB_USER | grep active
 
 echo "Success I can login!"
 echo "... I am now going to load the training Database"
-echo "... Prepare Data to Load"
-gunzip /tmp/mariadbdemo/mariadb-training/sample_databases/employees/*.gz
 echo "Connecting to the Database Server"
 
 # For async kubectl port-forward svc/masteronly -n $GITHUB_USER 3306:3306 &
 kubectl port-forward svc/mariadb-galera-masteronly -n $GITHUB_USER 3306:3306 &
 kubePID=$!
 sleep 5
-cd /tmp/mariadbdemo/mariadb-training/sample_databases/employees
+cd /tmp/mariadbdemo/terraformDemo/data
+echo "Creating Database"
+mariadb -uMARIADB_USER -pmariadb -h 127.0.0.1 -P3306 -e "CREATE DATABASE employees"
 echo "Loading Data in to Database...."
-mariadb -uMARIADB_USER -pmariadb -h 127.0.0.1 -P3306 < employees.sql
+mariadb -uMARIADB_USER -pmariadb -h 127.0.0.1 -P3306 employees < dump.sql
 cd /tmp/mariadbdemo/terraformDemo
 
 echo "Excellent that is done..."
@@ -216,7 +218,29 @@ kubectl exec -it -n $GITHUB_USER `kubectl get pods -n $GITHUB_USER | grep active
 
 echo "Finally! "
 echo "I am going to install the application.... standby"
-helm install phpapp mariadb-kester-repo/phpapp --namespace=$GITHUB_USER
+echo "A certificate manager"
+helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true
+echo "... and the app"
+kubectl create -f ./phpapp/production_issuer.yaml
+kubectl create -f ./phpapp/phpapp.yaml
 echo "and a load balancer..."
-helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.publishService.enabled=true
+helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.publishService.enabled=true  --namespace=$GITHUB_USER
+clear
+echo "... and a DNS record (this can take a few minutes)"
+sleep 120
+while [ "$(kubectl describe services -n $GITHUB_USER nginx-ingress-ingress-nginx-controller |awk '/LoadBalancer Ingress/{print $3}')" = "" ]; do
+   sleep 30
+   echo "Waiting for load balancer Service to be ready."
+done
+clear
+echo "... and configuring the Ingress"
+kubectl create -f ./phpapp/phpapp-ingress.yaml -n $GITHUB_USER
+
+lbip=$(kubectl describe services -n $GITHUB_USER nginx-ingress-ingress-nginx-controller |awk '/LoadBalancer Ingress/{print $3}')
+#doctl compute domain create kester.pro
+#doctl compute domain records create kester.pro --record-type A --record-data ${lbip} --record-ttl 3600 --record-name ${GITHUB_USER}
+#doctl compute domain records list kester.pro
+
+echo "Browse to http://$lbip"
+
 echo "This is how you connect to it - I am done"

@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpapp-lon
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: phpapp-lon
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpapp-lon
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: phpapp-lon
+  template:
+    metadata:
+      labels:
+        app: phpapp-lon
+    spec:
+      containers:
+        - name: phpapp
+          image: registry.digitalocean.com/mariadb-kester-kdr-demo/website:latest
+          ports:
+            - containerPort: 80
