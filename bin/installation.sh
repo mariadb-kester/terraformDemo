@@ -45,39 +45,56 @@ function forked_list_test() {
   test_forked_urls https://github.com/$GITHUB_USER/mariadbMaxscaleDocker
   test_forked_urls https://github.com/$GITHUB_USER/mariadbServerDocker
 }
+function getUserDetails() {
+  clear
+  echo "Welcome to this awesome demonstration."
+  echo "Before we can start I need to know your GitHub User Name?"
+  read GITHUB_USER
+  echo "Great, and now please tell me which email address you use for GitHub:"
+  read GITHUB_EMAIL
 
-clear
-echo "Welcome to this awesome demonstration."
-echo "Before we can start I need to know your GitHub User Name?"
-read GITHUB_USER
-echo "Great, and now please tell me which email address you use for GitHub:"
-read GITHUB_EMAIL
+  clear
+  echo "We now need your MariaDB Enterprise Token, you can get it from here:"
+  echo "https://customers.mariadb.com/downloads/token/"
+  echo "Please enter your token:"
+  read MARIADB_TOKEN
 
-clear
-echo "We now need your MariaDB Enterprise Token, you can get it from here:"
-echo "https://customers.mariadb.com/downloads/token/?_ga=2.167221694.1634209776.1666965848-1899018828.1664176865"
-echo "Please enter your token:"
-read MARIADB_TOKEN
+  clear
+  echo "Next we need a Digital Ocean API key, to get "
+  echo "the key, check this URL https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/digitalocean/apikey.md"
+  echo "Please enter the API key:"
+  read DO_API_KEY
 
-clear
-echo "Next we need a Digital Ocean API key, to get "
-echo "the key, check this URL https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/digitalocean/apikey.md"
-echo "Please enter the API key:"
+  clear
+  echo "Great, to connect to CircleCI I need your CircleCI Personal Token"
+  echo "https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/circleci/personaltoken.md"
+  echo "Please enter the CircleCI Personal Token:"
+  read CIRCLECI_API
 
-read DO_API_KEY
-echo "export TF_VAR_demo_digital_ocean_token=$DO_API_KEY" >> /tmp/mariadbdemo/terraformDemo/.env
+  echo "Thanks! I also need your CircleCI User Name"
+  read CIRCLECI_USER
 
-clear
-echo "Great, to connect to CircleCI I need your CircleCI Personal Token"
-echo "https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/circleci/personaltoken.md"
-echo "Please enter the CircleCI Personal Token:"
+  clear
+  echo "Which version of MariaDB would you like to install?"
+  read MARIADB_SERVER_VERSION
 
-read CIRCLECI_API
-echo "export CIRCLECI_API=$CIRCLECI_API" >> .env
+  echo "and the version of MaxScale?"
+  read MAXSCALE_VERSION
 
-echo "Thanks! I also need your CircleCI User Name"
-read CIRCLECI_USER
-echo "export CIRCLECI_USER=$CIRCLECI_USER" >> .env
+  echo "export GITHUB_USER=$GITHUB_USER" >> /tmp/mariadbdemo/terraformDemo/.env
+  echo "export GITHUB_EMAIL=$GITHUB_EMAIL" >> /tmp/mariadbdemo/terraformDemo/.env
+  echo "export DO_REPO=registry.digitalocean.com/$GITHUB_USER-kdr-demo" >> /tmp/mariadbdemo/terraformDemo/.env
+  echo "export MARIADB_TOKEN=$MARIADB_TOKEN" >> /tmp/mariadbdemo/terraformDemo/.env
+  echo "export MARIADB_SERVER_VERSION=$MARIADB_SERVER_VERSION" >> /tmp/mariadbdemo/terraformDemo/.env
+  echo "export MAXSCALE_VERSION=$MAXSCALE_VERSION" >> /tmp/mariadbdemo/terraformDemo/.env
+  echo "export TF_VAR_demo_digital_ocean_token=$DO_API_KEY" >> /tmp/mariadbdemo/terraformDemo/.env
+  echo "export CIRCLECI_API=$CIRCLECI_API" >> /tmp/mariadbdemo/terraformDemo/.env
+  echo "export CIRCLECI_USER=$CIRCLECI_USER" >> /tmp/mariadbdemo/terraformDemo/.env
+
+  chmod 700 /tmp/mariadbdemo/terraformDemo/.env
+}
+
+getUserDetails
 
 #Test Repo's are forked.
 forked_list_test
@@ -95,11 +112,7 @@ mkdir /tmp/mariadbdemo
 cd /tmp/mariadbdemo
 clone_repos
 
-echo "export GITHUB_USER=$GITHUB_USER" >> /tmp/mariadbdemo/terraformDemo/.env
-echo "export GITHUB_EMAIL=$GITHUB_EMAIL" >> /tmp/mariadbdemo/terraformDemo/.env
-echo "export DO_REPO=registry.digitalocean.com/$GITHUB_USER-kdr-demo" >> /tmp/mariadbdemo/terraformDemo/.env
-echo "export MARIADB_TOKEN=$MARIADB_TOKEN" >> /tmp/mariadbdemo/terraformDemo/.env
-chmod 700 /tmp/mariadbdemo/terraformDemo/.env
+
 
 #Set unique name for repos
 sed -i.bak "s/dev/${GITHUB_USER}/" /tmp/mariadbdemo/terraformDemo/dev/main.tf
@@ -156,6 +169,7 @@ echo "Configuring CLI tool"
 doctl kubernetes cluster kubeconfig save $kube_id
 echo "Configuring HELM"
 helm repo add mariadb-kester-repo https://mariadb-kester.github.io/helmChartsDatabaseDemo/
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 echo "Creating a Name Space for: " $GITHUB_USER
 kubectl create ns $GITHUB_USER
@@ -165,6 +179,7 @@ helm install mariadb mariadb-kester-repo/masterreplica --namespace=$GITHUB_USER 
 
 echo "Please wait while I build the database servers, I will check the status in two minutes"
 sleep 120
+#For masterreplica mariadb-masterreplica-2
 while [ "$(kubectl get pod -n mariadb-kester mariadb-galera-2  --output="jsonpath={.status.containerStatuses[*].ready}" | cut -d' ' -f2)" != "true" ]; do
    sleep 30
    echo "Waiting for Database Service to be ready."
@@ -182,10 +197,13 @@ echo "... I am now going to load the training Database"
 echo "... Prepare Data to Load"
 gunzip /tmp/mariadbdemo/mariadb-training/sample_databases/employees/*.gz
 echo "Connecting to the Database Server"
+
+# For async kubectl port-forward svc/masteronly -n $GITHUB_USER 3306:3306 &
 kubectl port-forward svc/mariadb-galera-masteronly -n $GITHUB_USER 3306:3306 &
 kubePID=$!
 sleep 5
 cd /tmp/mariadbdemo/mariadb-training/sample_databases/employees
+echo "Loading Data in to Database...."
 mariadb -uMARIADB_USER -pmariadb -h 127.0.0.1 -P3306 < employees.sql
 cd /tmp/mariadbdemo/terraformDemo
 
@@ -196,7 +214,9 @@ kill $kubePID
 kubectl exec -it -n $GITHUB_USER `kubectl get pods -n $GITHUB_USER | grep active | awk -F" " ' { print $1 } '` -- maxctrl list servers
 
 
-echo "Finally!"
+echo "Finally! "
 echo "I am going to install the application.... standby"
 helm install phpapp mariadb-kester-repo/phpapp --namespace=$GITHUB_USER
+echo "and a load balancer..."
+helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.publishService.enabled=true
 echo "This is how you connect to it - I am done"
