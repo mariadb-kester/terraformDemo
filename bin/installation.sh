@@ -50,14 +50,34 @@ clear
 echo "Welcome to this awesome demonstration."
 echo "Before we can start I need to know your GitHub User Name?"
 read GITHUB_USER
-
-echo "Great, and now please tell me which email address you use for GitHub"
+echo "Great, and now please tell me which email address you use for GitHub:"
 read GITHUB_EMAIL
 
 clear
-echo "We now need your MariaDB Enterprise Token:"
+echo "We now need your MariaDB Enterprise Token, you can get it from here:"
+echo "https://customers.mariadb.com/downloads/token/?_ga=2.167221694.1634209776.1666965848-1899018828.1664176865"
+echo "Please enter your token:"
 read MARIADB_TOKEN
 
+clear
+echo "Next we need a Digital Ocean API key, to get "
+echo "the key, check this URL https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/digitalocean/apikey.md"
+echo "Please enter the API key:"
+
+read DO_API_KEY
+echo "export TF_VAR_demo_digital_ocean_token=$DO_API_KEY" >> /tmp/mariadbdemo/terraformDemo/.env
+
+clear
+echo "Great, to connect to CircleCI I need your CircleCI Personal Token"
+echo "https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/circleci/personaltoken.md"
+echo "Please enter the CircleCI Personal Token:"
+
+read CIRCLECI_API
+echo "export CIRCLECI_API=$CIRCLECI_API" >> .env
+
+echo "Thanks! I also need your CircleCI User Name"
+read CIRCLECI_USER
+echo "export CIRCLECI_USER=$CIRCLECI_USER" >> .env
 
 #Test Repo's are forked.
 forked_list_test
@@ -91,48 +111,27 @@ git config user.email "$GITHUB_EMAIL"
 
 
 clear
-read -p  "I am now going to try and install the required tools and utillites, press Y to continue." prompt
-if [[ $prompt =~ [yY](es)* ]]
-then
+echo "I am now going to try and install the required tools and utilities"
 
-  if [[ $OSTYPE == 'darwin'* ]]; then
-    make prepare-mac
-  else
-    make prepare-linux
-  fi
+
+if [[ $OSTYPE == 'darwin'* ]]; then
+  make prepare-mac
 else
-  clear
-  echo "Exiting, you will need to run this script again"
-  exit 1
+  make prepare-linux
 fi
+
 
 clear
 echo "Next I am going to build the Digital Ocean Infrastructure."
-echo "To do this I will need a Digital Ocean API key, to get "
-echo "the key, check this URL https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/digitalocean/apikey.md"
-echo "Please enter the API key:"
 
-read DO_API_KEY
-echo "export TF_VAR_demo_digital_ocean_token=$DO_API_KEY" >> /tmp/mariadbdemo/terraformDemo/.env
 make init-dev
 make plan-dev
 make apply-dev
 
 clear
-echo "Great, we can now start to build the containers and push them to your Private repository"
-echo "But before we can do that, we need to configure CircleCI to build your Docker Containers"
-echo "To do this we are going to need a CircleCI Personal Token"
-echo "https://github.com/mariadb-kester/terraformDemo/blob/main/docs/files/circleci/personaltoken.md"
-echo "Please enter the CircleCI Personal Token:"
+echo "Now that the infrastructure is built, I am going to build your Docker Containers and push them to your Private repository "
 
-read CIRCLECI_API
-echo "export CIRCLECI_API=$CIRCLECI_API" >> .env
 
-echo "Thanks! I also need your CircleCI User Name"
-read CIRCLECI_USER
-echo "export CIRCLECI_USER=$CIRCLECI_USER" >> .env
-
-clear
 make circleci-configure-projects
 clear
 echo "Sit Back, Relax! I will need three or four minutes to build the containers for you."
@@ -147,6 +146,8 @@ echo "the training database and apply it."
 echo ""
 
 #get Kubernetes ID
+echo "Configuring doctl tool"
+doctl auth init -t $DO_API_KEY
 echo "Getting Cluster ID"
 doctl registry login
 kube_id=`doctl kubernetes cluster get mariadb-kester-kdr-demo | tail -n 1 | awk -F" " ' { print $1} '`
@@ -159,10 +160,11 @@ helm repo update
 echo "Creating a Name Space for: " $GITHUB_USER
 kubectl create ns $GITHUB_USER
 
-helm install mariadb $GITHUB_USER-repo/galera --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
+#helm install mariadb $GITHUB_USER-repo/galera --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
+helm install mariadb mariadb-kester-repo/masterreplica --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
 
 echo "Please wait while I build the database servers, I will check the status in two minutes"
-
+sleep 120
 while [ "$(kubectl get pod -n mariadb-kester mariadb-galera-2  --output="jsonpath={.status.containerStatuses[*].ready}" | cut -d' ' -f2)" != "true" ]; do
    sleep 30
    echo "Waiting for Database Service to be ready."
@@ -191,10 +193,10 @@ echo "Excellent that is done..."
 echo "... I am just going to check there are records in the database"
 mariadb -uMARIADB_USER -pmariadb -h 127.0.0.1 -P3306 -e "SELECT COUNT(*) FROM employees.employees"
 kill $kubePID
-
+kubectl exec -it -n $GITHUB_USER `kubectl get pods -n $GITHUB_USER | grep active | awk -F" " ' { print $1 } '` -- maxctrl list servers
 
 
 echo "Finally!"
 echo "I am going to install the application.... standby"
-#helm install phpAppDocker
+helm install phpapp mariadb-kester-repo/phpapp --namespace=$GITHUB_USER
 echo "This is how you connect to it - I am done"
