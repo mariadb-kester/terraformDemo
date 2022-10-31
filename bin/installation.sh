@@ -182,7 +182,8 @@ helm install mariadb mariadb-kester-repo/masterreplica --namespace=$GITHUB_USER 
 echo "Please wait while I build the database servers, I will check the status in two minutes"
 sleep 120
 #For masterreplica mariadb-masterreplica-2
-while [ "$(kubectl get pod -n mariadb-kester mariadb-galera-2  --output="jsonpath={.status.containerStatuses[*].ready}" | cut -d' ' -f2)" != "true" ]; do
+#For galera mariadb-galera-2
+while [ "$(kubectl get pod -n mariadb-kester mariadb-masterreplica-2 --output="jsonpath={.status.containerStatuses[*].ready}" | cut -d' ' -f2)" != "true" ]; do
    sleep 30
    echo "Waiting for Database Service to be ready."
 done
@@ -199,7 +200,8 @@ echo "... I am now going to load the training Database"
 echo "Connecting to the Database Server"
 
 # For async kubectl port-forward svc/masteronly -n $GITHUB_USER 3306:3306 &
-kubectl port-forward svc/mariadb-galera-masteronly -n $GITHUB_USER 3306:3306 &
+# For galera kubectl port-forward svc/mariadb-galera-masteronly -n $GITHUB_USER 3306:3306 &
+kubectl port-forward svc/masteronly -n $GITHUB_USER 3306:3306 &
 kubePID=$!
 sleep 5
 cd /tmp/mariadbdemo/terraformDemo/data
@@ -237,9 +239,9 @@ echo "... and configuring the Ingress"
 kubectl create -f ./phpapp/phpapp-ingress.yaml -n $GITHUB_USER
 
 lbip=$(kubectl describe services -n $GITHUB_USER nginx-ingress-ingress-nginx-controller |awk '/LoadBalancer Ingress/{print $3}')
-#doctl compute domain create kester.pro
-#doctl compute domain records create kester.pro --record-type A --record-data ${lbip} --record-ttl 3600 --record-name ${GITHUB_USER}
-#doctl compute domain records list kester.pro
+doctl compute domain create kester.pro
+doctl compute domain records create kester.pro --record-type A --record-data ${lbip} --record-ttl 3600 --record-name ${GITHUB_USER}
+doctl compute domain records list kester.pro
 
 echo "Browse to http://$lbip"
 
