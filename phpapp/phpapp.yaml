@@ -11,7 +11,7 @@ spec:
       name: http
   selector:
     app.kubernetes.io/name: phpapp-lon
-  ---
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,11 +31,13 @@ spec:
           image: registry.digitalocean.com/mariadb-kester-kdr-demo/website:latest
           ports:
             - containerPort: 80
-  ---
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: phpapp-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
   rules:
@@ -52,4 +54,22 @@ spec:
   tls:
     - hosts:
         - mariadb-kester.kester.pro
-      secretName: phpapp-tls
+      secretName: letsencrypt-prod
+  ➜  /tmp cat /tmp/mariadbdemo/terraformDemo/phpapp/production_issuer.yaml
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    # Email address used for ACME registration
+    email: kester.riley@mariadb.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Name of a secret used to store the ACME account private key
+      name: letsencrypt-prod
+    # Add a single challenge solver, HTTP01 using nginx
+    solvers:
+      - http01:
+          ingress:
+            class: nginx

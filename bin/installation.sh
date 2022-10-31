@@ -189,8 +189,8 @@ chmod 777 /tmp/mariadbdemo/terraformDemo/bin/install_phpapp.sh
 helm install mariadb mariadb-kester-repo/masterreplica --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
 
 clear
-echo "Please wait while I build the database servers, I will check the status in two minutes"
-sleep 180
+echo "Please wait while I build the database servers, I will check the status in five minutes"
+sleep 300
 #For masterreplica mariadb-masterreplica-2
 #For galera mariadb-galera-2
 while [ "$(kubectl get pod -n mariadb-kester mariadb-masterreplica-2 --output="jsonpath={.status.containerStatuses[*].ready}" | cut -d' ' -f2)" != "true" ]; do
