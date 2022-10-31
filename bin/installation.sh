@@ -80,17 +80,21 @@ function getUserDetails() {
   echo "and the version of MaxScale?"
   read MAXSCALE_VERSION
 
-  echo "export GITHUB_USER=$GITHUB_USER" >> /tmp/mariadbdemo/terraformDemo/.env
-  echo "export GITHUB_EMAIL=$GITHUB_EMAIL" >> /tmp/mariadbdemo/terraformDemo/.env
-  echo "export DO_REPO=registry.digitalocean.com/$GITHUB_USER-kdr-demo" >> /tmp/mariadbdemo/terraformDemo/.env
-  echo "export MARIADB_TOKEN=$MARIADB_TOKEN" >> /tmp/mariadbdemo/terraformDemo/.env
-  echo "export MARIADB_SERVER_VERSION=$MARIADB_SERVER_VERSION" >> /tmp/mariadbdemo/terraformDemo/.env
-  echo "export MAXSCALE_VERSION=$MAXSCALE_VERSION" >> /tmp/mariadbdemo/terraformDemo/.env
-  echo "export TF_VAR_demo_digital_ocean_token=$DO_API_KEY" >> /tmp/mariadbdemo/terraformDemo/.env
-  echo "export CIRCLECI_API=$CIRCLECI_API" >> /tmp/mariadbdemo/terraformDemo/.env
-  echo "export CIRCLECI_USER=$CIRCLECI_USER" >> /tmp/mariadbdemo/terraformDemo/.env
 
-  chmod 700 /tmp/mariadbdemo/terraformDemo/.env
+}
+
+set_env_variables() {
+    echo "export GITHUB_USER=$GITHUB_USER" >> /tmp/mariadbdemo/terraformDemo/.env
+    echo "export GITHUB_EMAIL=$GITHUB_EMAIL" >> /tmp/mariadbdemo/terraformDemo/.env
+    echo "export DO_REPO=registry.digitalocean.com/$GITHUB_USER-kdr-demo" >> /tmp/mariadbdemo/terraformDemo/.env
+    echo "export MARIADB_TOKEN=$MARIADB_TOKEN" >> /tmp/mariadbdemo/terraformDemo/.env
+    echo "export MARIADB_SERVER_VERSION=$MARIADB_SERVER_VERSION" >> /tmp/mariadbdemo/terraformDemo/.env
+    echo "export MAXSCALE_VERSION=$MAXSCALE_VERSION" >> /tmp/mariadbdemo/terraformDemo/.env
+    echo "export TF_VAR_demo_digital_ocean_token=$DO_API_KEY" >> /tmp/mariadbdemo/terraformDemo/.env
+    echo "export CIRCLECI_API=$CIRCLECI_API" >> /tmp/mariadbdemo/terraformDemo/.env
+    echo "export CIRCLECI_USER=$CIRCLECI_USER" >> /tmp/mariadbdemo/terraformDemo/.env
+
+    chmod 700 /tmp/mariadbdemo/terraformDemo/.env
 }
 
 mkdir /tmp/mariadbdemo
@@ -112,7 +116,7 @@ fi
 
 
 clone_repos
-
+set_env_variables
 
 
 #Set unique name for repos
