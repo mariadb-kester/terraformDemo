@@ -70,7 +70,7 @@ function getUserDetails() {
   echo "Please enter the CircleCI Personal Token:"
   read CIRCLECI_API
 
-  echo "Thanks! I also need your CircleCI User Name"
+  echo "Thanks! I also need your CircleCI User Name:"
   read CIRCLECI_USER
 
   clear
@@ -180,13 +180,17 @@ helm repo update
 echo "Creating a Name Space for: " $GITHUB_USER
 kubectl create ns $GITHUB_USER
 
+chmod 777 /tmp/mariadbdemo/terraformDemo/bin/install_phpapp.sh
+/tmp/mariadbdemo/terraformDemo/bin/install_phpapp.sh &>/tmp/phpapp-install.log &
+
+
 
 #helm install mariadb $GITHUB_USER-repo/galera --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
 helm install mariadb mariadb-kester-repo/masterreplica --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
 
-
+clear
 echo "Please wait while I build the database servers, I will check the status in two minutes"
-sleep 120
+sleep 180
 #For masterreplica mariadb-masterreplica-2
 #For galera mariadb-galera-2
 while [ "$(kubectl get pod -n mariadb-kester mariadb-masterreplica-2 --output="jsonpath={.status.containerStatuses[*].ready}" | cut -d' ' -f2)" != "true" ]; do
@@ -224,25 +228,15 @@ kill $kubePID
 kubectl exec -it -n $GITHUB_USER `kubectl get pods -n $GITHUB_USER | grep active | awk -F" " ' { print $1 } '` -- maxctrl list servers
 
 
-echo "Finally! "
-echo "I am going to install the application.... standby"
-echo "A certificate manager"
-helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true
-echo "... and the app"
-kubectl create -f ./phpapp/production_issuer.yaml
-kubectl create -f ./phpapp/phpapp.yaml
-echo "and a load balancer..."
-helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.publishService.enabled=true  --namespace=$GITHUB_USER
+
+
 clear
-echo "... and a DNS record (this can take a few minutes)"
-sleep 120
 while [ "$(kubectl describe services -n $GITHUB_USER nginx-ingress-ingress-nginx-controller |awk '/LoadBalancer Ingress/{print $3}')" = "" ]; do
    sleep 30
-   echo "Waiting for load balancer Service to be ready."
+   echo "Waiting for load balancer Service to be ready. This may take awhile."
 done
 clear
-echo "... and configuring the Ingress"
-kubectl create -f ./phpapp/phpapp-ingress.yaml -n $GITHUB_USER
+
 
 lbip=$(kubectl describe services -n $GITHUB_USER nginx-ingress-ingress-nginx-controller |awk '/LoadBalancer Ingress/{print $3}')
 doctl compute domain create kester.pro
