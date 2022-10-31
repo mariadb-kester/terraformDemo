@@ -93,6 +93,9 @@ function getUserDetails() {
   chmod 700 /tmp/mariadbdemo/terraformDemo/.env
 }
 
+mkdir /tmp/mariadbdemo
+cd /tmp/mariadbdemo
+
 getUserDetails
 
 #Test Repo's are forked.
@@ -107,8 +110,7 @@ else
 fi
 
 
-mkdir /tmp/mariadbdemo
-cd /tmp/mariadbdemo
+
 clone_repos
 
 
