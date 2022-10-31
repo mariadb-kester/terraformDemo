@@ -227,16 +227,12 @@ mariadb -uMARIADB_USER -pmariadb -h 127.0.0.1 -P3306 -e "SELECT COUNT(*) FROM em
 kill $kubePID
 kubectl exec -it -n $GITHUB_USER `kubectl get pods -n $GITHUB_USER | grep active | awk -F" " ' { print $1 } '` -- maxctrl list servers
 
-
-
-
 clear
 while [ "$(kubectl describe services -n $GITHUB_USER nginx-ingress-ingress-nginx-controller |awk '/LoadBalancer Ingress/{print $3}')" = "" ]; do
    sleep 30
    echo "Waiting for load balancer Service to be ready. This may take awhile."
 done
 clear
-
 
 lbip=$(kubectl describe services -n $GITHUB_USER nginx-ingress-ingress-nginx-controller |awk '/LoadBalancer Ingress/{print $3}')
 doctl compute domain create kester.pro
