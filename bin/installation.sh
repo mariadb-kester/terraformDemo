@@ -239,6 +239,6 @@ doctl compute domain create kester.pro
 doctl compute domain records create kester.pro --record-type A --record-data ${lbip} --record-ttl 3600 --record-name ${GITHUB_USER}
 doctl compute domain records list kester.pro
 
-echo "Browse to http://$lbip"
+echo "Browse to https://${GITHUB_USER}.kester.pro"
 
 echo "This is how you connect to it - I am done"
