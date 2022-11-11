@@ -238,7 +238,10 @@ lbip=$(kubectl describe services -n $GITHUB_USER nginx-ingress-ingress-nginx-con
 doctl compute domain create kester.pro
 doctl compute domain records create kester.pro --record-type A --record-data ${lbip} --record-ttl 3600 --record-name ${GITHUB_USER}
 doctl compute domain records list kester.pro
+kubectl port-forward svc/gui-active -n $GITHUB_USER 8989:8989 &
 
 echo "Browse to https://${GITHUB_USER}.kester.pro"
+echo "MaxScale is exposed locally: localhost:8989"
+
 
 echo "This is how you connect to it - I am done"
