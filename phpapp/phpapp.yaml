@@ -44,13 +44,27 @@ spec:
     - host: mariadb-kester.kester.pro
       http:
         paths:
-          - path: /
+          - path: /application
             pathType: Prefix
             backend:
               service:
                 name: phpapp-service
                 port:
                   number: 80
+          - path: /maxscaleactive
+            pathType: Prefix
+            backend:
+              service:
+                name: gui-active
+                port:
+                  number: 8989
+          - path: /maxscalepassive
+            pathType: Prefix
+            backend:
+              service:
+                name: gui-passive
+                port:
+                  number: 8988
   tls:
     - hosts:
         - mariadb-kester.kester.pro
