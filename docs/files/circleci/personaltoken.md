@@ -1,6 +1,6 @@
 # CircleCI
 
-To create a personal API token, browse to CircleCI [https://app.circleci.com/settings/user](User Settings) and
+To create a personal API token, browse to CircleCI [User Settings](https://app.circleci.com/settings/user/tokens) and
 select `Personal API Tokens` from the menu.
 
 ![Personal API Token](../../images/circleci/CI_personal_token.png)

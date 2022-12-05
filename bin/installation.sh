@@ -100,6 +100,11 @@ set_env_variables() {
 mkdir /tmp/mariadbdemo
 cd /tmp/mariadbdemo
 
+if [ -d ~/.kube/cache ]
+then
+  rm -rf ~/.kube/cache
+fi
+
 getUserDetails
 
 #Test Repo's are forked.
