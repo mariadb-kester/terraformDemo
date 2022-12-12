@@ -185,10 +185,6 @@ helm repo update
 echo "Creating a Name Space for: " $GITHUB_USER
 kubectl create ns $GITHUB_USER
 
-chmod 777 /tmp/mariadbdemo/terraformDemo/bin/install_phpapp.sh
-/tmp/mariadbdemo/terraformDemo/bin/install_phpapp.sh &>/tmp/phpapp-install.log &
-
-
 
 #helm install mariadb $GITHUB_USER-repo/galera --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
 helm install mariadb mariadb-kester-repo/masterreplica --namespace=$GITHUB_USER --set maxscale.image.repository=registry.digitalocean.com/$GITHUB_USER-kdr-demo/mariadb-maxscale --set image.repository=$GITHUB_USER-kdr-demo/mariadb-es
@@ -202,6 +198,9 @@ while [ "$(kubectl get pod -n mariadb-kester mariadb-masterreplica-2 --output="j
    sleep 30
    echo "Waiting for Database Service to be ready."
 done
+
+chmod 777 /tmp/mariadbdemo/terraformDemo/bin/install_phpapp.sh
+/tmp/mariadbdemo/terraformDemo/bin/install_phpapp.sh &>/tmp/phpapp-install.log &
 
 clear
 echo "Great, we are now installing your databases, this takes a bit of time, as it is building and installing Two
